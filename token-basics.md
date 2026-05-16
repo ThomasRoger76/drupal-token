@@ -137,6 +137,43 @@ $node_tokens = array_keys($info['tokens']['node'] ?? []);
 
 ---
 
+## Token Browser dans les Formulaires PHP (Forms API)
+
+```php
+// Ajouter le Token Browser à un champ textfield custom
+// (le bouton "Browse available tokens" apparaît sous le champ)
+$form['mon_texte_avec_tokens'] = [
+  '#type' => 'textarea',
+  '#title' => $this->t('Message avec tokens'),
+  '#default_value' => $config['message'] ?? '',
+  '#description' => $this->t('Utiliser des tokens comme [node:title] ou [user:name].'),
+  // Clé pour activer le Token Tree browser
+  '#token_types' => ['node', 'user', 'site'],
+];
+
+// Attacher le module token pour le browser UI
+if (\Drupal::moduleHandler()->moduleExists('token')) {
+  $form['token_tree'] = [
+    '#theme' => 'token_tree_link',      // Lien compact "Browse tokens"
+    '#token_types' => ['node', 'user'],
+    '#show_restricted' => TRUE,         // Inclure les tokens restreints
+    '#weight' => 90,
+  ];
+}
+
+// OU afficher l'arbre complet inline
+$form['token_tree_full'] = [
+  '#theme' => 'token_tree_table',      // Tableau complet des tokens
+  '#token_types' => ['node'],
+  '#show_nested' => FALSE,
+  '#weight' => 91,
+];
+```
+
+**Template `token_tree_link` :** affiche un lien cliquable "Browse available tokens" qui ouvre une modale. Nécessite le module `token` activé.
+
+---
+
 ## Tokens dans les Configurations UI
 
 ```

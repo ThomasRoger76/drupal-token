@@ -9,6 +9,8 @@ description: Use when working with Drupal Token module - using built-in tokens i
 
 Référentiel complet du module Token Drupal 8-11+ : tokens natifs (node, user, site, date), utilisation dans Metatag/Pathauto/Webform/Email, création de tokens custom (`hook_token_info()`, `hook_tokens()`), remplacement programmatique. Token est la colle entre les modules de configuration.
 
+> **Exemples PHP complets** (`hook_token_info()` + `hook_tokens()` avec chaining vers une entité) dans [custom-tokens.md](custom-tokens.md).
+
 ## 🎯 La Règle Fondamentale
 
 > **Token = variable universelle Drupal.** Partout où une configuration accepte du texte dynamique (Metatag, Pathauto, Webform, Email, Rules...), les tokens permettent d'injecter des valeurs d'entités sans écrire de code. Créer des tokens custom quand les tokens natifs ne suffisent pas.
@@ -39,6 +41,12 @@ Référentiel complet du module Token Drupal 8-11+ : tokens natifs (node, user, 
 | Tokens dans Metatag | `[node:title]` + `[node:summary]` + `[node:field_image:entity:file:url]` | [tokens-in-modules.md](tokens-in-modules.md) |
 | Tokens dans les emails Webform | `[webform_submission:values:prenom]` | [tokens-in-modules.md](tokens-in-modules.md) |
 | Tester un token depuis Drush | `drush php:eval "echo \Drupal::token()->replace('[node:title]', ['node' => \Drupal::entityTypeManager()->getStorage('node')->load(42)]);"` | [token-basics.md](token-basics.md) |
+| **Déboguer un token non résolu** | Vérifier `hook_token_info()` retourne bien le type, `drush cr` | [custom-tokens.md](custom-tokens.md) |
+| **Token custom sur entité custom** | `hook_token_info()` + `hook_tokens()` PHP complet avec `$data['mon_type']` | [custom-tokens.md](custom-tokens.md) |
+| **Token chaînable vers une entité** | `'type' => 'taxonomy_term'` + `$token_service->findWithPrefix($tokens, $name)` | [custom-tokens.md](custom-tokens.md) |
+| **Cacher le résultat d'un token lent** | `cache.default` dans `hook_tokens()` avec cache tag de l'entité | [custom-tokens.md](custom-tokens.md) |
+| Lister tous les tokens disponibles (UI) | `/admin/help/token` — Token Tree navigable par type | [token-basics.md](token-basics.md) |
+| Token avec fallback si vide | `[node:summary\|[node:title]]` (pipe = fallback) | [token-basics.md](token-basics.md) |
 
 ## Anti-Patterns Critiques
 

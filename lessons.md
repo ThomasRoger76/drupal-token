@@ -31,3 +31,24 @@ Problèmes avec les tokens Drupal découverts en projet réel.
 - **Cause :** Ancienne fonction D7 supprimée en D10
 - **Correct :** `\Drupal::service('token')->replace($text, $data, ['clear' => TRUE])`
 - **Prévention :** Chercher `token_replace(` avant tout upgrade D9→D10
+
+### 2026-05-16 — Token Pathauto avec caractères spéciaux — URL illisible
+
+- **Symptôme :** URL générée : `/articles/l%C3%A9%C3%A7on-drupal` au lieu de `/articles/lecon-drupal`
+- **Cause :** Module Token installé mais option "Transliterate prior to creating alias" désactivée dans Pathauto
+- **Correct :** `/admin/config/search/path/settings` → activer la translitération → régénérer les alias
+- **Prévention :** Activer la translitération dès l'installation de Pathauto — avant la création du premier contenu
+
+### 2026-05-16 — Token date avec format incorrect — Schema.org invalide
+
+- **Symptôme :** Google Search Console signale des dates Schema.org invalides
+- **Cause :** `[node:created]` retourne une date lisible ("15 mai 2026") au lieu du format ISO 8601 requis par Schema.org
+- **Correct :** Utiliser `[node:created:html_datetime]` qui retourne `2026-05-15T10:30:00+02:00`
+- **Prévention :** Pour Schema.org, toujours utiliser le format `html_datetime` sur les dates
+
+### 2026-05-16 — hook_token_info() dans hook_install() — jamais découvert
+
+- **Symptôme :** Les tokens custom n'apparaissent pas dans le Token Tree Browser
+- **Cause :** `hook_token_info()` déclaré dans `hook_install()` au lieu du `.module` — il ne persiste pas
+- **Correct :** `hook_token_info()` et `hook_tokens()` DOIVENT être dans le fichier `.module` (ou `.tokens.inc`)
+- **Prévention :** Ces hooks sont des hooks de découverte — toujours dans le fichier principal du module + `drush cr`
